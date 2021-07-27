@@ -13,6 +13,7 @@ const quteify_globals = {
       takes_arguments: true,
       desc: 'navigates to a webpage or query',
       args_string: '&lt;url_or_query&gt;',
+      aliases: ['o'],
       exec: (args)=>{
         let regex = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
 
@@ -29,24 +30,28 @@ const quteify_globals = {
       takes_arguments: false,
       desc: 'navigates back in this tab\'s history',
       args_string: '',
+      aliases: ['b'],
       exec: ()=>{history.back();}
     },
     'forward': {
       takes_arguments: false,
       desc: 'navigates forward in this tab\'s history',
       args_string: '',
+      aliases: ['f'],
       exec: ()=>{history.forward();}
     },
     'close': {
       takes_arguments: false,
       desc: 'closes the current tab',
       args_string: '',
+      aliases: ['c', 'q'],
       exec: ()=>{window.close();},
     },
     'new': {
       takes_arguments: false,
       desc: 'opens a new tab',
       args_string: '',
+      aliases: ['n'],
       exec: ()=>{window.open(quteify_globals.new_tab_page);}
     }
   },
@@ -128,6 +133,7 @@ function hints_toggle(){
       let off = cumulative_offset(parent);
       let child = document.createElement('div');
       child.classList.add('quteify-hint');
+      child.style.fontSize = '12pt';
       child.style.display = 'block';
       child.style.minWidth = '20px';
       child.style.textAlign = 'center';
@@ -158,7 +164,6 @@ function cmd_toggle(){
     mode = quteify_globals.modes.cmd;
 
     container = document.createElement('div');
-    container.classList.add('quteify-commandline');
     container.style.width = '100vw';
     container.style.position = 'fixed';
     container.style.bottom = '0';
@@ -191,8 +196,8 @@ function cmd_toggle(){
 function cmd_execute(cmd){
   let split = cmd.split(' ');
   for(let key in quteify_globals.commands){
-    if(split[1] === key){
-      quteify_globals.commands[key].exec(cmd.substring(key.length+3));
+    if(split[1] === key || quteify_globals.commands[key].aliases.indexOf(split[1]) > -1){
+      quteify_globals.commands[key].exec(cmd.substring(split[1].length+3));
       return;
     }
   }
@@ -212,7 +217,12 @@ function cmd_render(e){
   container.children[0].innerHTML = '';
   let ind = 0;
   for(let key in quteify_globals.commands){
-    if(key.indexOf(e.target.value.substring(2, key.length+2)) > -1){
+    let hit = false;
+    quteify_globals.commands[key].aliases.forEach((alias)=>{
+      if(alias.indexOf(e.target.value.substring(2, alias.length+2)) > -1) hit = true;
+    });
+
+    if(hit || key.indexOf(e.target.value.substring(2, key.length+2)) > -1){
       let el = document.createElement('div');
       el.style.width = '100vw';
       el.style.background = (ind++ % 2 === 0 ? '#333' : 'grey');
