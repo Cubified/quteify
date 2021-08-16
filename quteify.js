@@ -175,6 +175,8 @@ function cmd_toggle(){
     let autocomplete = document.createElement('div');
     autocomplete.style.borderTop = '1px solid grey';
     autocomplete.style.width = '100vw';
+    autocomplete.style.color = 'white';
+    autocomplete.style.font = '10pt sans-serif';
     autocomplete.style.display = 'flex';
     autocomplete.style.alignItems = 'center';
     autocomplete.style.justifyContent = 'center';
@@ -184,6 +186,8 @@ function cmd_toggle(){
     let input = document.createElement('input');
     input.type = 'text';
     input.style.width = '100vw';
+    input.style.color = 'white';
+    input.style.font = '10pt sans-serif';
     container.appendChild(input);
     input.focus();
     input.addEventListener('keyup', cmd_render);
@@ -225,7 +229,7 @@ function cmd_render(e){
     if(hit || key.indexOf(e.target.value.substring(2, key.length+2)) > -1){
       let el = document.createElement('div');
       el.style.width = '100vw';
-      el.style.background = (ind++ % 2 === 0 ? '#333' : 'grey');
+      el.style.background = (ind++ % 2 === 1 ? '#333' : 'grey');
       el.style.textIndent = '5px';
       el.style.columns = '10px 2';
       el.innerHTML = `<div>${key} ${quteify_globals.commands[key].args_string}</div><div>${quteify_globals.commands[key].desc}</div>`;
